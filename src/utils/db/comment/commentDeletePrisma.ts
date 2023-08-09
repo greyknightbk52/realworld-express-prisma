@@ -3,7 +3,7 @@ import prisma from "../prisma";
 
 export default async function commentDeletePrisma(
   slug: string,
-  id: number,
+  id: string,
   user: User
 ) {
   // See if user is the author of the comment it wants to delete

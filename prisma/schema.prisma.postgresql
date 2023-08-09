@@ -1,4 +1,4 @@
- This is your Prisma schema file,
+// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -6,46 +6,39 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL") /// Format in env file: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
 }
 
 model User {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   email      String    @unique /// User email for registering and login use.
-  username   String    @unique /// User internal id.
+  username   String    @id /// User internal id.
   password   String /// User password stored in the database.
   bio        String? /// User biographical information.
   image      String? /// Link to the user avatar.
-  followUserIds String[] @db.ObjectId
-  follows    User[]    @relation("UserFollows", fields: [followUserIds], references: [id]) /// List of other users that this one follows.
-  followedByUserIds String[] @db.ObjectId
-  followedBy User[]    @relation("UserFollows", fields: [followedByUserIds], references: [id]) /// List of other users that follows this one.
+  follows    User[]    @relation("UserFollows") /// List of other users that this one follows.
+  followedBy User[]    @relation("UserFollows") /// List of other users that follows this one.
   authored   Article[] @relation("Author") /// List of articles this user has written.
-  favoriteArticleIds String[] @db.ObjectId
-  favorites  Article[] @relation("Favorites", fields: [favoriteArticleIds], references: [id]) /// List of articles this user has favorited.
+  favorites  Article[] @relation("Favorites") /// List of articles this user has favorited.
   comment    Comment[] @relation("Author") /// List of comments this user has written.
 }
 
 model Article {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   title          String    @unique
-  slug           String    @unique /// Slug is an uri safe string derived from the title.
+  slug           String    @id /// Slug is an uri safe string derived from the title.
   description    String /// Description for SEO of this article.
   body           String /// The main content of the article.
-  tagIds         String[] @db.ObjectId
-  tagList        Tag[] @relation(fields: [tagIds], references: [id]) /// List of tags associated with this article.
+  tagList        Tag[] /// List of tags associated with this article.
   author         User      @relation("Author", fields: [authorUsername], references: [username], onDelete: Cascade) /// User that is the author of this article.
   authorUsername String /// Username of the author of this article.
-  favoritedByUserIds String[] @db.ObjectId
-  favoritedBy    User[]    @relation("Favorites", fields: [favoritedByUserIds], references: [id]) /// List of users that have favorited this article.
+  favoritedBy    User[]    @relation("Favorites") /// List of users that have favorited this article.
   comments       Comment[] @relation("Comments") /// List of comments of this article.
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now())
 }
 
 model Comment {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  id             Int      @id @default(autoincrement())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
   body           String /// The main content of the comment.
@@ -56,8 +49,6 @@ model Comment {
 }
 
 model Tag {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  tagName String    @unique
-  articleIds String[] @db.ObjectId
-  article Article[] @relation(fields: [articleIds], references: [id]) /// List of articles that have this tag.
+  tagName String    @id
+  article Article[] /// List of articles that have this tag.
 }

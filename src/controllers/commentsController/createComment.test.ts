@@ -26,6 +26,7 @@ function mockResponse() {
 }
 
 const mockUser = {
+  id: "1",
   username: "test-user-username",
   bio: null,
   email: "test-user@email.com",
@@ -35,6 +36,9 @@ const mockUser = {
   followedBy: [],
   authored: [],
   favorites: [],
+  followUserIds: [],
+  followedByUserIds: [],
+  favoriteArticleIds: [],
 };
 
 const mockComment = {
@@ -43,21 +47,21 @@ const mockComment = {
   body: "test-comment-body",
   createdAt: new Date(),
   updatedAt: new Date(),
-  id: 1,
+  id: "1",
   author: mockUser,
 };
 
 const mockView = {
-  id: 1,
-  createdAt: new Date(),
+  id: "1",
   updatedAt: new Date(),
+  createdAt: new Date(),
   body: "test-comment-body",
   author: { ...mockUser, following: false },
 };
 mockedCommentViewer.mockReturnValue(mockView);
 
-describe("Create Comment Controller", function () {
-  test("Success path", async function () {
+describe("Create Comment Controller", function() {
+  test("Success path", async function() {
     const mockReq = {
       params: {
         slug: "test-slug",
@@ -82,7 +86,7 @@ describe("Create Comment Controller", function () {
     expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalled();
   });
-  test("User does not exist path", async function () {
+  test("User does not exist path", async function() {
     const mockReq = {
       params: {
         slug: "test-slug",
@@ -100,7 +104,7 @@ describe("Create Comment Controller", function () {
     await createComment(mockReq, mockRes as unknown as Response, next);
     expect(mockRes.sendStatus).toHaveBeenCalledWith(401);
   });
-  test("Comment cannot be created", async function () {
+  test("Comment cannot be created", async function() {
     const mockReq = {
       params: {
         slug: "test-slug",

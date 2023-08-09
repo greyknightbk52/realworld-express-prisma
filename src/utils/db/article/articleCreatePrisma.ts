@@ -19,7 +19,7 @@ export default async function articleCreatePrisma(
       ...info,
       slug,
       authorUsername,
-      tagList: { connect: tagList },
+      tagList: { connect: tagList.map(tag => ({ id: tag.id })) },
     },
     include: {
       author: { include: { followedBy: true } },

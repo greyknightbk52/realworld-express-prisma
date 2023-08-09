@@ -32,6 +32,7 @@ export default async function prismaErrorHandler(
       logger.debug(
         `Unhandled error with code ${err.code} in prismaErrorHandler`
       );
+      logger.debug(err)
       return res.sendStatus(500);
   }
 }

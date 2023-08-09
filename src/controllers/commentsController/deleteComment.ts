@@ -27,7 +27,7 @@ export default async function deleteComment(
     if (!currentUser) return res.sendStatus(401);
 
     // Remove comment from database
-    const comment = await commentDeletePrisma(slug, id, currentUser);
+    const comment = await commentDeletePrisma(slug, req.params.id, currentUser);
     if (!comment) return res.sendStatus(500);
 
     // Create comment view
